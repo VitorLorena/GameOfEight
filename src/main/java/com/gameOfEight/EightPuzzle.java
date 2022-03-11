@@ -19,38 +19,38 @@ import javax.swing.SwingUtilities;
 public class EightPuzzle extends JPanel{
 	
 	private static final long serialVersionUID = 1L;
-	// Size of our Game of Fifteen instance
+
 	  private int size;
-	  // Number of tiles
+
 	  private int nbTiles;
-	  // Grid UI Dimension
+
 	  private int dimension;
-	  // Foreground Color
-	  private static final Color FOREGROUND_COLOR = new Color(0, 127, 255); // we use arbitrary color
-	  // Random object to shuffle tiles
+
+	  private static final Color FOREGROUND_COLOR = new Color(0, 127, 255);
+
 	  private static final Random RANDOM = new Random();
-	  // Storing the tiles in a 1D Array of integers
+
 	  private int[] tiles;
-	  // Size of tile on UI
+
 	  private int tileSize;
-	  // Position of the blank tile
+
 	  private int blankPos;
-	  // Margin for the grid on the frame
+
 	  private int margin;
-	  // Grid UI Size
+
 	  private int gridSize;
-	  private boolean gameOver; // true if game over, false otherwise
+	  
+	  private boolean gameOver;
 	  
 	  public EightPuzzle(int size, int dim, int mar) {
 	    this.size = size;
 	    dimension = dim;
 	    margin = mar;
 	    
-	    // init tiles 
-	    nbTiles = size * size - 1; // -1 because we don't count blank tile
+
+	    nbTiles = size * size - 1;
 	    tiles = new int[size * size];
 	    
-	    // calculate grid size and tile size
 	    gridSize = (dim - 2 * margin);
 	    tileSize = gridSize / size;
 	    
@@ -64,40 +64,34 @@ public class EightPuzzle extends JPanel{
 	    addMouseListener(new MouseAdapter() {
 	      @Override
 	      public void mousePressed(MouseEvent e) {
-	        // used to let users to interact on the grid by clicking
-	        // it's time to implement interaction with users to move tiles to solve the game !
+
 	        if (gameOver) {
 	          newGame();
 	        } else {
-	          // get position of the click
+
 	          int ex = e.getX() - margin;
 	          int ey = e.getY() - margin;
-	          
-	          // click in the grid ?
+
 	          if (ex < 0 || ex > gridSize  || ey < 0  || ey > gridSize)
 	            return;
-	          
-	          // get position in the grid
+
 	          int c1 = ex / tileSize;
 	          int r1 = ey / tileSize;
-	          
-	          // get position of the blank cell
+
 	          int c2 = blankPos % size;
 	          int r2 = blankPos / size;
-	          
-	          // we convert in the 1D coord 
+
 	          int clickPos = r1 * size + c1;
 	          
 	          int dir = 0;
-	          
-	          // we search direction for multiple tile moves at once
+
 	          if (c1 == c2  &&  Math.abs(r1 - r2) > 0)
 	            dir = (r1 - r2) > 0 ? size : -size;
 	          else if (r1 == r2 && Math.abs(c1 - c2) > 0)
 	            dir = (c1 - c2) > 0 ? 1 : -1;
 	            
 	          if (dir != 0) {
-	            // we move tiles in the direction
+
 	            do {
 	              int newBlankPos = blankPos + dir;
 	              tiles[blankPos] = tiles[newBlankPos];
@@ -106,12 +100,10 @@ public class EightPuzzle extends JPanel{
 	            
 	            tiles[blankPos] = 0;
 	          }
-	          
-	          // we check if game is solved
+
 	          gameOver = isSolved();
 	        }
-	        
-	        // we repaint panel
+
 	        repaint();
 	      }
 	    });
@@ -121,9 +113,9 @@ public class EightPuzzle extends JPanel{
 	  
 	  private void newGame() {
 	    do {
-	      reset(); // reset in intial state
-	      shuffle(); // shuffle
-	    } while(!isSolvable()); // make it until grid be solvable
+	      reset();
+	      shuffle();
+	    } while(!isSolvable());
 	    
 	    gameOver = false;
 	  }
@@ -132,13 +124,12 @@ public class EightPuzzle extends JPanel{
 	    for (int i = 0; i < tiles.length; i++) {
 	      tiles[i] = (i + 1) % tiles.length;
 	    }
-	    
-	    // we set blank cell at the last
+
 	    blankPos = tiles.length - 1;
 	  }
 	  
 	  private void shuffle() {
-	    // don't include the blank tile in the shuffle, leave in the solved position
+
 	    int n = nbTiles;
 	    
 	    while (n > 1) {
@@ -148,11 +139,7 @@ public class EightPuzzle extends JPanel{
 	      tiles[n] = tmp;
 	    }
 	  }
-	  
-	  // Only half permutations o the puzzle are solvable
-	  // Whenever a tile is preceded by a tile with higher value it counts
-	  // as an inversion. In our case, with the blank tile in the solved position,
-	  // the number of inversions must be even for the puzzle to be solvable
+
 	  private boolean isSolvable() {
 	    int countInversions = 0;
 	    
@@ -167,7 +154,7 @@ public class EightPuzzle extends JPanel{
 	  }
 	  
 	  private boolean isSolved() {
-	    if (tiles[tiles.length - 1] != 0) // if blank tile is not in the solved position ==> not solved
+	    if (tiles[tiles.length - 1] != 0)
 	      return false;
 	    
 	    for (int i = nbTiles - 1; i >= 0; i--) {
@@ -180,14 +167,13 @@ public class EightPuzzle extends JPanel{
 	  
 	  private void drawGrid(Graphics2D g) {
 	    for (int i = 0; i < tiles.length; i++) {
-	      // we convert 1D coords to 2D coords given the size of the 2D Array
+
 	      int r = i / size;
 	      int c = i % size;
-	      // we convert in coords on the UI
+
 	      int x = margin + c * tileSize;
 	      int y = margin + r * tileSize;
-	      
-	      // check special case for blank tile
+
 	      if(tiles[i] == 0) {
 	        if (gameOver) {
 	          g.setColor(FOREGROUND_COLOR);
@@ -197,7 +183,6 @@ public class EightPuzzle extends JPanel{
 	        continue;
 	      }
 	      
-	      // for other tiles
 	      g.setColor(getForeground());
 	      g.fillRoundRect(x, y, tileSize, tileSize, 25, 25);
 	      g.setColor(Color.BLACK);
@@ -219,7 +204,6 @@ public class EightPuzzle extends JPanel{
 	  }
 	  
 	  private void drawCenteredString(Graphics2D g, String s, int x, int y) {
-	    // center string s for the given tile (x,y)
 	    FontMetrics fm = g.getFontMetrics();
 	    int asc = fm.getAscent();
 	    int desc = fm.getDescent();
@@ -244,7 +228,6 @@ public class EightPuzzle extends JPanel{
 	      frame.setResizable(false);
 	      frame.add(new EightPuzzle(3, 600, 30), BorderLayout.CENTER);
 	      frame.pack();
-	      // center on the screen
 	      frame.setLocationRelativeTo(null);
 	      frame.setVisible(true);
 	    });
