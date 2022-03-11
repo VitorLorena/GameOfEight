@@ -7,3 +7,11 @@ O Jogo dos Oito é um jogo de tabuleiro. O jogo é estruturado em um tabuleiro 3
  <img align="center" alt="Vitor-gif" height="150" width="300" src="https://media.giphy.com/media/WD0NW6vjEleJ84kQRK/giphy.gif">
  
  
+# Instruções 
+
+Baixar o código na sua máquina:
+``` git clone https://github.com/VitorLorena/GameOfEight.git```
+
+Rodar no Spring Boot:
+``` src/main/java/com/gameOfEight > Run as```
+
